@@ -1,69 +1,80 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="home-page">
+      <section className="hero-section">
+        <p className="eyebrow">Speech Pathology Teaching Tool</p>
+
+        <h2>Create phoneme activities with confidence.</h2>
+
+        <p className="hero-description">
+          Phoneme Activity Builder helps teachers create clear,
+          browser-based classroom activities for Speech Pathology students.
+          Build and preview phoneme Wordle and Word Search activities.
+        </p>
+
+        <div className="hero-actions">
+          <Link href="/wordle" className="primary-button">
+            Create Wordle
+          </Link>
+
+          <Link href="/word-search" className="secondary-button">
+            Create Word Search
+          </Link>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="activity-section">
+        <div className="section-heading">
+          <p className="eyebrow">Choose an activity</p>
+          <h2>Build a classroom activity</h2>
         </div>
-      </main>
+
+        <div className="activity-grid">
+          <article className="activity-card">
+            <div className="card-icon">W</div>
+
+            <h3>Phoneme Wordle</h3>
+
+            <p>
+              Create a Wordle-style guessing activity where each grid cell
+              represents one phoneme.
+            </p>
+
+            <ul>
+              <li>Phoneme-based answers</li>
+              <li>Accessible phoneme hints</li>
+              <li>Difficulty settings</li>
+            </ul>
+
+            <Link href="/wordle" className="card-link">
+              Start Wordle Builder →
+            </Link>
+          </article>
+
+          <article className="activity-card">
+            <div className="card-icon">WS</div>
+
+            <h3>Phoneme Word Search</h3>
+
+            <p>
+              Generate an interactive word search using phoneme-based classroom
+              content.
+            </p>
+
+            <ul>
+              <li>Phoneme puzzle grid</li>
+              <li>Small word list</li>
+              <li>Interactive discovery</li>
+            </ul>
+
+            <Link href="/word-search" className="card-link">
+              Start Word Search Builder →
+            </Link>
+          </article>
+        </div>
+      </section>
     </div>
   );
 }
