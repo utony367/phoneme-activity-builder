@@ -91,7 +91,7 @@ export default function AboutPage() {
           </p>
 
           <p>
-            <strong>Student ID:</strong> XXXXXXXX
+            <strong>Student ID:</strong> 21822338
           </p>
 
           <p>
