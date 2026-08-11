@@ -93,6 +93,17 @@ export default function AboutPage() {
             <strong>Assessment:</strong> Assessment 1 — Frontend Design and
             Usability
           </p>
+
+          <p>
+            <strong>GitHub Repository:</strong>{" "}
+            <a
+              href="https://github.com/utony367/phoneme-activity-builder"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View project on GitHub
+            </a>
+          </p>
         </div>
       </section>
 

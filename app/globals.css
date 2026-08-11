@@ -1335,3 +1335,75 @@ html[data-layout="compact"]
   width: 100%;
   height: auto;
 }
+
+.video-section {
+  padding: 65px 0;
+}
+
+.references-section {
+  padding: 65px 0;
+  border-top: 1px solid var(--border);
+}
+
+.references-card {
+  padding: 28px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+
+  box-shadow: var(--shadow);
+}
+
+.reference-list {
+  margin: 0;
+  padding-left: 24px;
+}
+
+.reference-list li {
+  margin-bottom: 16px;
+
+  color: var(--text-soft);
+
+  line-height: 1.7;
+}
+
+.reference-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* GitHub Repository Link */
+
+.student-card a {
+  color: var(--primary);
+
+  font-weight: 700;
+
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.student-card a:hover {
+  color: var(--primary-dark);
+}
+
+.student-card a:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+
+  border-radius: 4px;
+}
+
+/* About responsive design */
+
+@media (max-width: 760px) {
+  .video-section,
+  .references-section {
+    padding: 45px 0;
+  }
+
+  .references-card {
+    padding: 20px;
+  }
+}
