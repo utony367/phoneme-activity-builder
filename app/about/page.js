@@ -95,7 +95,7 @@ export default function AboutPage() {
           </p>
 
           <p>
-            <strong>Subject:</strong> CSE3MAD
+            <strong>Subject:</strong> CSE3CWA
           </p>
 
           <p>
