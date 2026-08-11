@@ -6,7 +6,7 @@ export default function Footer() {
       </p>
 
       <p>
-        CSE3MAD · Assessment 1 · Phoneme Activity Builder
+        CSE3CWA · Assessment 1
       </p>
     </footer>
   );

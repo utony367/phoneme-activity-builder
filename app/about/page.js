@@ -11,25 +11,49 @@ export default function AboutPage() {
         </h2>
 
         <p>
-          Phoneme Activity Builder is a frontend tool designed for teachers
-          preparing classroom activities for Speech Pathology students.
+          Phoneme Activity Builder is a frontend web application designed for
+          teachers preparing phoneme-based classroom activities for Speech
+          Pathology students.
         </p>
 
         <p>
-          Assessment 1 focuses on frontend design, usability, accessibility,
-          responsive design and standalone HTML generation.
+          The application allows teachers to build, preview and generate two
+          different activities: Phoneme Wordle and Phoneme Word Search.
         </p>
       </section>
 
       <section className="info-grid">
         <article className="info-card">
           <h3>
+            Assessment 1 Scope
+          </h3>
+
+          <p>
+            Assessment 1 focuses on frontend design, usability, accessibility,
+            responsive design and standalone HTML generation.
+          </p>
+
+          <p>
+            Database-driven word lists and more advanced content management are
+            not included at this stage and can be introduced in later
+            assessments.
+          </p>
+        </article>
+
+        <article className="info-card">
+          <h3>
             Phoneme Wordle
           </h3>
 
           <p>
-            Create a Wordle-style activity where each cell represents one
-            phoneme rather than one standard spelling letter.
+            The Wordle builder creates a Wordle-style classroom activity where
+            each game cell represents one phoneme rather than one English
+            spelling letter.
+          </p>
+
+          <p>
+            Teachers can choose the difficulty, use phoneme hints, preview the
+            activity and download a standalone playable HTML file.
           </p>
         </article>
 
@@ -39,19 +63,13 @@ export default function AboutPage() {
           </h3>
 
           <p>
-            Generate an interactive puzzle using phoneme-based words for
-            classroom practice.
+            The Word Search builder generates an interactive phoneme-based
+            puzzle using a small fixed classroom word list.
           </p>
-        </article>
-
-        <article className="info-card">
-          <h3>
-            Assessment Scope
-          </h3>
 
           <p>
-            Database-driven word lists are not included in Assessment 1.
-            These features can be introduced in later project stages.
+            The activity includes difficulty settings, answer display,
+            interactive word selection and standalone HTML generation.
           </p>
         </article>
       </section>
@@ -81,7 +99,8 @@ export default function AboutPage() {
           </p>
 
           <p>
-            <strong>Assessment:</strong> Assessment 1 — Frontend Design and Usability
+            <strong>Assessment:</strong> Assessment 1 — Frontend Design and
+            Usability
           </p>
         </div>
       </section>
@@ -97,27 +116,31 @@ export default function AboutPage() {
           </h2>
 
           <p>
-            The final walkthrough video will demonstrate the activity builders,
-            responsive design, accessibility features and standalone HTML
-            generation.
+            This video demonstrates the main application workflow, responsive
+            interface, accessibility features, standalone HTML generation and
+            project structure.
           </p>
         </div>
 
-        <div className="video-placeholder">
-          <div>
-            <span aria-hidden="true">
-              ▶
-            </span>
+        <div className="video-wrapper">
+          <video
+            controls
+            preload="metadata"
+            className="assessment-video"
+          >
+            <source
+              src="/assessment-demo.mp4"
+              type="video/mp4"
+            />
 
-            <p>
-              Assessment walkthrough video
-            </p>
-
-            <small>
-              Final 6–8 minute video will be added before submission.
-            </small>
-          </div>
+            Your browser does not support the video element.
+          </video>
         </div>
+
+        <p className="video-note">
+          Add the final 6–8 minute assessment video to the public folder using
+          the filename assessment-demo.mp4.
+        </p>
       </section>
 
       <section className="references-section">
@@ -129,13 +152,39 @@ export default function AboutPage() {
           <h2>
             Design and development sources
           </h2>
+
+          <p>
+            These sources informed the component architecture, frontend
+            implementation, accessibility and usability decisions used in this
+            project.
+          </p>
         </div>
 
         <div className="references-card">
-          <p>
-            A minimum of five academic or industry references will be included
-            in APA 7th edition style before final submission.
-          </p>
+          <ol className="reference-list">
+            <li>
+              Meta Platforms, Inc. (n.d.). <em>React documentation</em>.
+              React.
+            </li>
+
+            <li>
+              Vercel. (n.d.). <em>Next.js documentation</em>. Next.js.
+            </li>
+
+            <li>
+              World Wide Web Consortium. (2023).{" "}
+              <em>Web Content Accessibility Guidelines (WCAG) 2.2</em>.
+            </li>
+
+            <li>
+              MDN Web Docs. (n.d.). <em>Accessibility</em>. Mozilla.
+            </li>
+
+            <li>
+              Nielsen Norman Group. (n.d.).{" "}
+              <em>10 usability heuristics for user interface design</em>.
+            </li>
+          </ol>
         </div>
       </section>
     </div>
