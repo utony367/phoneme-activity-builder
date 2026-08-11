@@ -1317,3 +1317,21 @@ html[data-layout="compact"]
       auto;
   }
 }
+/* Assessment video */
+
+.video-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 30px auto 0;
+  overflow: hidden;
+
+  background: #000;
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow);
+}
+
+.assessment-video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
