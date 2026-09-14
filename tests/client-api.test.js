@@ -24,8 +24,27 @@ describe("client API helpers", () => {
     );
   });
 
+  it("includes safe Zod field details in a validation error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        Response.json(
+          {
+            error: "Invalid request data",
+            details: { fieldErrors: { phonemes: ["Use valid IPA phoneme notation"] } },
+          },
+          { status: 400 },
+        ),
+      ),
+    );
+
+    await expect(requestJson("/api/activities/2/words", { method: "POST" })).rejects.toThrow(
+      "Invalid request data: phonemes: Use valid IPA phoneme notation",
+    );
+  });
+
   it("creates a safe HTML filename from a saved activity title", () => {
-    expect(safeActivityFilename('  My / vowels: "week 1"\u0000  ')).toBe(
+    expect(safeActivityFilename('  My / vowels: "week 1"\\u0000  ')).toBe(
       "my-vowels-week-1.html",
     );
   });
