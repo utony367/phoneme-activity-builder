@@ -21,14 +21,19 @@
 
 ## Docker commands to type on screen
 
-```bash
+Before starting Docker, return to the terminal running `npm run dev` and press **Ctrl+C**. This frees port 3000 so the container can start without a port-conflict error.
+
+For Windows PowerShell, run each command as one line:
+
+```powershell
 docker build -t phoneme-builder-assessment2 .
 docker volume create phoneme-data
-docker run --rm -d --name phoneme-a2 -p 3000:3000 \
-  -v phoneme-data:/data phoneme-builder-assessment2
-curl -i http://localhost:3000/health
+docker run --rm -d --name phoneme-a2 -p 3000:3000 -v phoneme-data:/data phoneme-builder-assessment2
+curl.exe -i http://localhost:3000/health
 docker stop phoneme-a2
 ```
+
+For macOS/Linux terminals, the same one-line commands work; `curl -i http://localhost:3000/health` can be used in place of `curl.exe`.
 
 Expected health body:
 
