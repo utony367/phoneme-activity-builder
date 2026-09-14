@@ -3,7 +3,7 @@
 **Student:** [Replace with your name]  
 **Student ID:** [Replace with your student ID]  
 **Project:** Phoneme Activity Builder  
-**Approximate narrative word count:** 1,105 words (excluding references)
+**Approximate narrative word count:** 1,140 words (excluding references)
 
 ## Purpose and scope
 
@@ -25,7 +25,7 @@ The phoneme field is a Unicode string rather than a single character or fixed-si
 
 The API provides full CRUD operations. `GET /api/activities` returns all saved configurations with their words. `POST /api/activities` creates one configuration. A specific activity can be read, updated, or deleted through `/api/activities/:id`. Words are created under `/api/activities/:id/words`, then updated or deleted through `/api/words/:id`. The Saved Activities dashboard presents this workflow as normal teacher interactions: create a configuration, open it, add words and phonemes, edit settings, edit a word, or delete a record after confirmation.
 
-The route handlers are intentionally small. They use a common JSON reader and error formatter, while a dedicated word service performs normalisation. This reduces repeated logic and makes the expected API behaviour predictable. For example, a word such as `  CHAIR ` is trimmed and stored as `chair`. Optional blank hints become `null`, which is clearer than treating an empty string as meaningful data.
+Route handlers share a JSON reader, error formatter, and word normalisation service. For example, `  CHAIR ` is stored as `chair`, and optional blank hints become `null`.
 
 Input validation is implemented with Zod schemas. Zod is a schema-validation library designed for JavaScript and TypeScript applications, and it supports parsing data before it reaches downstream code (Zod, n.d.). The activity schema requires a non-empty title, valid activity type and difficulty, a grid size from 8 to 20, and attempts from 3 to 10. The word schema requires letters A–Z for word text, non-empty phonemes up to 200 characters, and optional hints up to 240 characters. Positive numeric IDs are separately checked before a database lookup.
 
@@ -41,7 +41,7 @@ Generated markup is treated as a security boundary. Text rendered as HTML is esc
 
 ## Quality assurance, Docker, and reflection
 
-Automated tests cover validation, normalisation, health checking, client API error handling, and both generators. The GitHub Actions quality workflow runs dependency installation, Prisma generation and schema validation, linting, unit tests, a production build, a Docker image build, and a container smoke test. The smoke test checks both `/health` and the activity collection endpoint. `GET /health` returns `{"status":"ok"}` with HTTP 200, providing a simple observable result for the required video demonstration.
+Automated tests cover validation, normalisation, health checking, client API error handling, and both generators. GitHub Actions runs Prisma generation and schema validation, linting, unit tests, a production build, Docker build, and a container smoke test. The smoke test checks both `/health` and the activity collection endpoint. `GET /health` returns `{"status":"ok"}` with HTTP 200.
 
 The application is Dockerised with a Node 22 Alpine multi-stage Dockerfile. Multi-stage builds separate build dependencies from the runtime image, which Docker describes as a way to keep final images focused on the artefacts required to run an application (Docker, Inc., n.d.). At container startup, an entrypoint applies Prisma migrations before starting the standalone Next.js server. The SQLite file is stored at `/data/app.db`; mounting a named volume at `/data` means saved records survive a new container. This makes the project reproducible on another computer with Docker Desktop.
 
