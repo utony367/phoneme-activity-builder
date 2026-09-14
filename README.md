@@ -176,7 +176,7 @@ components/                React UI components
 lib/                       Validation, persistence helpers, API helpers, generators
 prisma/                    Prisma schema and SQLite migration
 tests/                     Vitest unit tests
-docs/                      Assessment report, video script, AI acknowledgement, references
+docs/                      Assessment report, references, design documentation
 Dockerfile                 Production container definition
 docker-entrypoint.sh       Migration then production startup
 .github/workflows/         Quality and Docker smoke checks
@@ -184,12 +184,10 @@ docker-entrypoint.sh       Migration then production startup
 
 ## Assessment 2 submission checklist
 
-- [ ] Replace `STUDENT_ID` and other placeholders in the video/acknowledgement documents.
-- [ ] Record the narrated demonstration using `docs/VIDEO_WALKTHROUGH.md`.
 - [ ] Complete the unit's official AI acknowledgement form accurately.
 - [ ] Run the quality commands above and confirm Docker `/health` returns 200.
 - [ ] Submit a ZIP of the source code **without** `node_modules`, `.next`, `.env`, `*.db`, `*.db-wal`, or `*.db-shm`.
 - [ ] Include this repository link: https://github.com/utony367/phoneme-activity-builder
 - [ ] Include the required supporting documentation and references.
 
-See [Assessment report](docs/ASSESSMENT2_REPORT.md), [video walkthrough](docs/VIDEO_WALKTHROUGH.md), [AI acknowledgement template](docs/AI_ACKNOWLEDGEMENT.md), and [references](docs/REFERENCES.md) before submitting.
+See the [Assessment report](docs/ASSESSMENT2_REPORT.md) and [references](docs/REFERENCES.md) before submitting.
