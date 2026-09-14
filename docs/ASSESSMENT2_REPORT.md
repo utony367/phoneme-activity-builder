@@ -1,7 +1,7 @@
 # Assessment 2 Technical Report: Backend Implementation and Database Integration
 
-**Student:** [Qinghua You]  
-**Student ID:** [21822338]  
+**Student:** Qinghua You  
+**Student ID:** 21822338  
 **Project:** Phoneme Activity Builder  
 **Approximate narrative word count:** 1,140 words (excluding references)
 
