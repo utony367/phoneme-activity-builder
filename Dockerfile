@@ -7,6 +7,10 @@ FROM base AS dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
 
+FROM base AS production-dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -27,11 +31,11 @@ RUN addgroup --system --gid 1001 nodejs \
   && mkdir -p /data \
   && chown -R nextjs:nodejs /data
 
+COPY --from=production-dependencies --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --chmod=755 --chown=nextjs:nodejs docker-entrypoint.sh ./docker-entrypoint.sh
 
 USER nextjs

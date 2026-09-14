@@ -128,13 +128,7 @@ All write requests are validated by Zod before Prisma is called.
 | Duplicate word in the same Activity | 409 with an error message |
 | Unexpected server failure | 500 with a generic error message; no stack trace is returned |
 
-Activity titles are 1–100 characters. Word text is normalized to lowercase and limited to A–Z letters; optional hints are limited to 240 characters. HTML generators escape visible text and safely serialize embedded data before creating a downloadable file.
-
-### Phoneme format
-
-Phonemes are required Unicode IPA text up to 200 characters. The validator deliberately preserves multi-character symbols and combining marks, including tie bars, stress marks, length marks, syllable dots, and spaces. Examples include `/tʃ eə/`, `[ˈhæp.i]`, `t͡ʃ aɪ`, and `/ˌdʒəˈrəf/`.
-
-Use either unwrapped IPA, one matching `/.../` wrapper, or one matching `[...]` wrapper. Empty values, digits-only text, delimiter-only values, non-IPA characters, nested/mixed wrappers, and unclosed wrappers are rejected. Saved legacy records are checked again before HTML generation, so malformed phonemes return a clear 400 response rather than being silently included.
+Activity titles are 1–100 characters. Word text is normalized to lowercase and limited to A–Z letters; phonemes are required Unicode text up to 200 characters; optional hints are limited to 240 characters. HTML generators escape visible text and safely serialize embedded data before creating a downloadable file.
 
 ## Use the saved-activity workflow
 
@@ -156,6 +150,8 @@ npm run build
 ```
 
 The GitHub Actions workflow runs the same validation, lint, tests, production build, Docker image build, container startup, `/health` check, and activity-list smoke check on pushes and pull requests.
+
+It also runs `npm audit --omit=dev --audit-level=high` as a production-dependency gate. The audit reviewed on 14 September 2026 reported **0 production vulnerabilities**. The full development install reported three development-only advisories: one high advisory for transitive `js-yaml` and two moderate advisories for Vitest/@vitest-mocker. These packages are not copied into the production-only dependency stage; the available Vitest fix requires a major-version upgrade, so it is intentionally deferred for this assessment.
 
 ## Docker
 
