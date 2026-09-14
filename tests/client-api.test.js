@@ -51,6 +51,10 @@ describe("client API helpers", () => {
     );
   });
 
+  it("replaces a single Windows path separator in a filename", () => {
+    expect(safeActivityFilename("Unit\\Week")).toBe("unit-week.html");
+  });
+
   it("returns generated HTML instead of treating a successful download as JSON", async () => {
     vi.stubGlobal(
       "fetch",
