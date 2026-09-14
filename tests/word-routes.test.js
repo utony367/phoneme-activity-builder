@@ -91,6 +91,35 @@ describe("Word routes", () => {
     });
   });
 
+  it.each([
+    ["POST", () => POST(
+      new Request("http://localhost/api/activities/2/words", {
+        method: "POST",
+        body: JSON.stringify({ text: "chair", phonemes: "123" }),
+      }),
+      activityParams("2"),
+    )],
+    ["PUT", () => PUT(
+      new Request("http://localhost/api/words/9", {
+        method: "PUT",
+        body: JSON.stringify({ text: "chair", phonemes: "/tʃ" }),
+      }),
+      wordParams("9"),
+    )],
+  ])("returns validation details for malformed phonemes on %s", async (_method, request) => {
+    mocks.activityFindUnique.mockResolvedValue({ id: 2 });
+
+    const response = await request();
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "Invalid request data",
+      details: { fieldErrors: { phonemes: [expect.any(String)] } },
+    });
+    expect(mocks.wordCreate).not.toHaveBeenCalled();
+    expect(mocks.wordUpdate).not.toHaveBeenCalled();
+  });
+
   it("maps duplicate and missing Word mutations to conflict and not-found responses", async () => {
     mocks.wordUpdate.mockRejectedValueOnce({ code: "P2002" });
     const duplicate = await PUT(
