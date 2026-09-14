@@ -23,6 +23,8 @@
 # runtime SQLite databases
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 
 # misc
 .DS_Store
