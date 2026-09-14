@@ -24,17 +24,27 @@ function readPreference(name, allowedValues, fallback) {
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState(() =>
-    readPreference("theme", ["light", "dark"], "light")
-  );
+  const [theme, setThemeState] = useState("light");
 
-  const [layoutPreference, setLayoutPreferenceState] = useState(() =>
-    readPreference(
-      "layoutPreference",
-      ["comfortable", "compact"],
-      "comfortable"
-    )
-  );
+  const [layoutPreference, setLayoutPreferenceState] =
+    useState("comfortable");
+
+  useEffect(() => {
+    const preferenceTimer = window.setTimeout(() => {
+      setThemeState(
+        readPreference("theme", ["light", "dark"], "light")
+      );
+      setLayoutPreferenceState(
+        readPreference(
+          "layoutPreference",
+          ["comfortable", "compact"],
+          "comfortable"
+        )
+      );
+    }, 0);
+
+    return () => window.clearTimeout(preferenceTimer);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme =
