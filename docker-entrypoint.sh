@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-: "${DATABASE_URL:=file:/app/data/app.db}"
+: "${DATABASE_URL:=file:/data/app.db}"
 export DATABASE_URL
 
 ./node_modules/.bin/prisma migrate deploy
