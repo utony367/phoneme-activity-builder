@@ -44,7 +44,9 @@ describe("client API helpers", () => {
   });
 
   it("creates a safe HTML filename from a saved activity title", () => {
-    expect(safeActivityFilename('  My / vowels: "week 1"\\u0000  ')).toBe(
+    expect(
+      safeActivityFilename('  My / vowels: "week 1"' + String.fromCharCode(0) + "  "),
+    ).toBe(
       "my-vowels-week-1.html",
     );
   });
