@@ -20,9 +20,7 @@ CREATE TABLE "Word" (
     "activityId" INTEGER NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Word_activityId_fkey"
-      FOREIGN KEY ("activityId") REFERENCES "Activity" ("id")
-      ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "Word_activityId_fkey" FOREIGN KEY ("activityId") REFERENCES "Activity" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex
