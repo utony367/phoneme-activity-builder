@@ -21,6 +21,7 @@ export default function Navbar() {
           <Link href="/">Home</Link>
           <Link href="/wordle">Wordle</Link>
           <Link href="/word-search">Word Search</Link>
+          <Link href="/activities">Saved Activities</Link>
           <Link href="/about">About</Link>
           <Link href="/settings">Settings</Link>
         </div>
@@ -41,6 +42,7 @@ export default function Navbar() {
           <Link href="/" onClick={closeMenu}>Home</Link>
           <Link href="/wordle" onClick={closeMenu}>Wordle</Link>
           <Link href="/word-search" onClick={closeMenu}>Word Search</Link>
+          <Link href="/activities" onClick={closeMenu}>Saved Activities</Link>
           <Link href="/about" onClick={closeMenu}>About</Link>
           <Link href="/settings" onClick={closeMenu}>Settings</Link>
         </div>
