@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { requestJson, safeActivityFilename } from "../lib/client-api.js";
+import {
+  fetchActivityHtml,
+  requestJson,
+  safeActivityFilename,
+} from "../lib/client-api.js";
 
 describe("client API helpers", () => {
   afterEach(() => {
@@ -24,5 +28,29 @@ describe("client API helpers", () => {
     expect(safeActivityFilename('  My / vowels: "week 1"\u0000  ')).toBe(
       "my-vowels-week-1.html",
     );
+  });
+
+  it("returns generated HTML instead of treating a successful download as JSON", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response("<!doctype html><title>Saved activity</title>", {
+          headers: { "Content-Type": "text/html; charset=utf-8" },
+        }),
+      ),
+    );
+
+    await expect(fetchActivityHtml(7)).resolves.toContain("Saved activity");
+  });
+
+  it("surfaces a generation error from the server", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        Response.json({ error: "At least one word is required" }, { status: 400 }),
+      ),
+    );
+
+    await expect(fetchActivityHtml(7)).rejects.toThrow("At least one word is required");
   });
 });

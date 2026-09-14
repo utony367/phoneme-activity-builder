@@ -45,4 +45,15 @@ describe("validation", () => {
     expect(parsePositiveId("2")).toBe(2);
     expect(() => parsePositiveId("0")).toThrow("Invalid ID");
   });
+
+  it("normalizes a cleared activity hint to null", () => {
+    expect(
+      activitySchema.parse({
+        title: "Short vowels",
+        activityType: "WORDLE",
+        difficulty: "EASY",
+        hint: "   ",
+      }).hint,
+    ).toBeNull();
+  });
 });
