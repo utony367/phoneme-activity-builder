@@ -1,7 +1,7 @@
-import { ApiError, apiError } from "../../../../../../lib/api.js";
-import { generateActivityHtml } from "../../../../../../lib/generators/index.js";
-import { prisma } from "../../../../../../lib/prisma.js";
-import { parsePositiveId } from "../../../../../../lib/validation.js";
+import { ApiError, apiError } from "../../../../../lib/api.js";
+import { generateActivityHtml } from "../../../../../lib/generators/index.js";
+import { prisma } from "../../../../../lib/prisma.js";
+import { parsePositiveId } from "../../../../../lib/validation.js";
 
 async function activityId(params) {
   const { id } = await params;
