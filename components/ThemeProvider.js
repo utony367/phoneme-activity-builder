@@ -9,51 +9,32 @@ import {
 
 const ThemeContext = createContext(null);
 
+function readPreference(name, allowedValues, fallback) {
+  if (typeof document === "undefined") {
+    return fallback;
+  }
+
+  const preferenceCookie = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith(`${name}=`));
+
+  const value = preferenceCookie?.split("=")[1];
+
+  return allowedValues.includes(value) ? value : fallback;
+}
+
 export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState("light");
+  const [theme, setThemeState] = useState(() =>
+    readPreference("theme", ["light", "dark"], "light")
+  );
 
-  const [layoutPreference, setLayoutPreferenceState] =
-    useState("comfortable");
-
-  useEffect(() => {
-    const cookies = document.cookie
-      .split("; ")
-      .filter(Boolean);
-
-    const themeCookie = cookies.find((cookie) =>
-      cookie.startsWith("theme=")
-    );
-
-    const layoutCookie = cookies.find((cookie) =>
-      cookie.startsWith("layoutPreference=")
-    );
-
-    if (themeCookie) {
-      const savedTheme =
-        themeCookie.split("=")[1];
-
-      if (
-        savedTheme === "light" ||
-        savedTheme === "dark"
-      ) {
-        setThemeState(savedTheme);
-      }
-    }
-
-    if (layoutCookie) {
-      const savedLayout =
-        layoutCookie.split("=")[1];
-
-      if (
-        savedLayout === "comfortable" ||
-        savedLayout === "compact"
-      ) {
-        setLayoutPreferenceState(
-          savedLayout
-        );
-      }
-    }
-  }, []);
+  const [layoutPreference, setLayoutPreferenceState] = useState(() =>
+    readPreference(
+      "layoutPreference",
+      ["comfortable", "compact"],
+      "comfortable"
+    )
+  );
 
   useEffect(() => {
     document.documentElement.dataset.theme =
