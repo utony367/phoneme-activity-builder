@@ -72,6 +72,16 @@ describe("saved activity generators", () => {
     expect(generateActivityHtml(wordSearchActivity)).toBe(html);
   });
 
+  it("rejects mixed valid and unsupported legacy words instead of omitting one", () => {
+    expect(() => generateWordSearchHtml({
+      ...wordSearchActivity,
+      words: [
+        ...wordSearchActivity.words,
+        { text: "co-op", phonemes: "/k əʊ ɒ p/" },
+      ],
+    })).toThrow("Stored words must contain letters A-Z only");
+  });
+
   it("rejects a word that cannot fit in its configured grid", () => {
     expect(() => generateWordSearchHtml({
       ...wordSearchActivity,
