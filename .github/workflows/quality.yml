@@ -1,0 +1,60 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./test.db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Report full dependency audit (informational)
+        run: |
+          npm audit --json > /tmp/npm-audit.json || true
+          node -e 'const audit = require("/tmp/npm-audit.json"); console.log("npm audit:", JSON.stringify(audit.metadata.vulnerabilities));'
+      - name: Gate high-severity production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - run: npx prisma generate
+      - run: npx prisma validate
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  docker-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production image
+        run: docker build -t phoneme-builder-assessment2 .
+      - name: Start production container
+        run: docker run --detach --name phoneme-a2 --publish 3000:3000 --volume phoneme-data:/data phoneme-builder-assessment2
+      - name: Verify health and activity APIs
+        run: |
+          set -eu
+          status="000"
+          for attempt in $(seq 1 30); do
+            status="$(curl --silent --output /tmp/health.json --write-out "%{http_code}" http://127.0.0.1:3000/health || true)"
+            if [ "$status" = "200" ] && [ "$(cat /tmp/health.json)" = '{"status":"ok"}' ]; then
+              break
+            fi
+            sleep 1
+          done
+          test "$status" = "200"
+          test "$(cat /tmp/health.json)" = '{"status":"ok"}'
+          activities_status="$(curl --silent --output /tmp/activities.json --write-out "%{http_code}" http://127.0.0.1:3000/api/activities)"
+          test "$activities_status" = "200"
+          test "$(cat /tmp/activities.json)" = "[]"
+      - name: Show container logs
+        if: always()
+        run: docker logs phoneme-a2 || true
+      - name: Stop and remove container
+        if: always()
+        run: docker rm --force phoneme-a2 || true
