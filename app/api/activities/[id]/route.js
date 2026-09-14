@@ -4,7 +4,12 @@ import { activitySchema, parsePositiveId } from "../../../../lib/validation.js";
 
 async function activityId(params) {
   const { id } = await params;
-  return parsePositiveId(id);
+
+  try {
+    return parsePositiveId(id);
+  } catch {
+    throw new ApiError("Invalid activity ID", 400);
+  }
 }
 
 export async function GET(_request, { params }) {
