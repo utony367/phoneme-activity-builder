@@ -875,6 +875,20 @@ textarea:focus-visible {
   color: var(--text-soft);
 }
 
+.preview-panel {
+  margin-bottom: 24px;
+}
+
+.activity-preview {
+  display: block;
+  width: 100%;
+  min-height: 580px;
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+  background: white;
+}
+
 @media (max-width: 900px) {
   .saved-activities-layout {
     grid-template-columns: 1fr;

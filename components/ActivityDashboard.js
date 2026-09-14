@@ -34,14 +34,17 @@ export default function ActivityDashboard() {
   const [form, setForm] = useState(emptyActivity);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState(null);
 
   async function loadActivities() {
     setLoading(true);
+    setLoadFailed(false);
     try {
       setActivities(await requestJson("/api/activities"));
     } catch (error) {
+      setLoadFailed(true);
       setStatus({ type: "error", message: error.message });
     } finally {
       setLoading(false);
@@ -56,7 +59,10 @@ export default function ActivityDashboard() {
         if (active) setActivities(saved);
       })
       .catch((error) => {
-        if (active) setStatus({ type: "error", message: error.message });
+        if (active) {
+          setLoadFailed(true);
+          setStatus({ type: "error", message: error.message });
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -191,7 +197,7 @@ export default function ActivityDashboard() {
         </div>
 
         {loading ? <p className="state-message" role="status">Loading saved activities…</p> : null}
-        {!loading && activities.length === 0 ? <div className="empty-state"><h3>No activities saved yet</h3><p>Create your first configuration, then add words and phonemes from its management page.</p></div> : null}
+        {!loading && !loadFailed && activities.length === 0 ? <div className="empty-state"><h3>No activities saved yet</h3><p>Create your first configuration, then add words and phonemes from its management page.</p></div> : null}
         {!loading && activities.length > 0 ? (
           <ul className="activity-list">
             {activities.map((activity) => (

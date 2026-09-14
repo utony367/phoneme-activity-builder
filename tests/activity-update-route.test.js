@@ -14,7 +14,10 @@ describe("activity update route", () => {
   beforeEach(() => mocks.update.mockReset());
 
   it("persists a cleared teacher hint as null", async () => {
-    mocks.update.mockImplementation(async ({ where, data }) => ({ id: where.id, ...data }));
+    mocks.update.mockImplementation(async (input) => ({
+      id: input?.where?.id ?? 0,
+      hint: input?.data && "hint" in input.data ? input.data.hint : "unexpected hint value",
+    }));
 
     const response = await PUT(
       new Request("http://localhost/api/activities/4", {

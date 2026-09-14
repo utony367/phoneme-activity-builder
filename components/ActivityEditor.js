@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { downloadActivity, requestJson } from "../lib/client-api";
+import { downloadActivity, fetchActivityHtml, requestJson } from "../lib/client-api";
 import StatusMessage from "./StatusMessage";
 import WordManager from "./WordManager";
 
@@ -13,6 +13,7 @@ export default function ActivityEditor({ activityId }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState("");
   const [status, setStatus] = useState(null);
 
   async function loadActivity() {
@@ -90,9 +91,18 @@ export default function ActivityEditor({ activityId }) {
     }
   }
 
-  function preview() {
+  async function preview() {
     if (!activity?.words?.length) return;
-    window.open(`/api/activities/${activityId}/generate`, "_blank", "noopener,noreferrer");
+    setGenerating(true);
+    setStatus(null);
+    try {
+      setPreviewHtml(await fetchActivityHtml(activityId));
+      setStatus({ type: "success", message: "Preview ready below." });
+    } catch (error) {
+      setStatus({ type: "error", message: error.message });
+    } finally {
+      setGenerating(false);
+    }
   }
 
   if (loading) return <p className="state-message standard-page" role="status">Loading this saved activity…</p>;
@@ -104,6 +114,16 @@ export default function ActivityEditor({ activityId }) {
       <div className="editor-title-row"><div><p className="eyebrow">Activity #{activity.id}</p><h2>{activity.title}</h2></div><div className="generation-actions"><button className="secondary-action" type="button" disabled={!activity.words.length || generating} onClick={preview}>Preview HTML</button><button className="primary-action" type="button" disabled={!activity.words.length || generating} onClick={download}>{generating ? "Preparing…" : "Download HTML"}</button></div></div>
       {!activity.words.length ? <p className="generation-note">Add a word before previewing or downloading the stored activity.</p> : null}
       <StatusMessage status={status} />
+
+      {previewHtml ? (
+        <section className="saved-panel preview-panel" aria-labelledby="preview-title">
+          <div className="panel-heading">
+            <div><p className="eyebrow">Generated from stored data</p><h2 id="preview-title">Activity preview</h2></div>
+            <button className="text-button" type="button" onClick={() => setPreviewHtml("")}>Close preview</button>
+          </div>
+          <iframe className="activity-preview" title={`${activity.title} preview`} sandbox="allow-scripts" srcDoc={previewHtml} />
+        </section>
+      ) : null}
 
       <section className="saved-panel editor-section" aria-labelledby="activity-settings-title">
         <p className="eyebrow">Saved configuration</p><h2 id="activity-settings-title">Activity settings</h2>
