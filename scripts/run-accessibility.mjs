@@ -1,3 +1,4 @@
+import { chromium } from "playwright";
 import lighthouse from "lighthouse";
 import * as chromeLauncher from "chrome-launcher";
 import { createServer } from "node:http";
@@ -55,10 +56,19 @@ try {
     ["word-search", "http://127.0.0.1:3002/word_search"],
   ];
   const summary = [];
+  const browser = await chromium.connectOverCDP(
+    `http://127.0.0.1:${chrome.port}`,
+  );
+  targets.push(["dashboard-dark", base + "/dashboard"]);
   for (const [name, url] of targets) {
+    if (name === "dashboard-dark")
+      await browser
+        .contexts()[0]
+        .addCookies([{ name: "theme", value: "dark", url: base }]);
     const result = await lighthouse(url, {
       port: chrome.port,
       onlyCategories: ["accessibility"],
+      disableStorageReset: true,
       output: ["json", "html"],
       logLevel: "error",
     });
