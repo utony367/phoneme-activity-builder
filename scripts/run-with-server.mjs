@@ -1,11 +1,10 @@
-import { mkdirSync, writeFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { execFileSync, spawn } from "node:child_process";
-mkdirSync(".test-data", { recursive: true });
-const file = resolve(
-  ".test-data/" + (process.env.EVIDENCE_DB || "evidence") + ".db",
-);
-if (!existsSync(file)) writeFileSync(file, "");
+const directory = mkdtempSync(join(tmpdir(), "phoneme-evidence-"));
+const file = join(directory, "database.db");
+writeFileSync(file, "");
 const port = process.env.PORT || "3001";
 const env = { ...process.env, DATABASE_URL: "file:" + file, PORT: port };
 execFileSync(
@@ -43,5 +42,9 @@ try {
   });
   process.exitCode = code || 0;
 } finally {
-  server.kill("SIGTERM");
+  await new Promise((resolve) => {
+    server.once("exit", resolve);
+    server.kill("SIGTERM");
+  });
+  rmSync(directory, { recursive: true, force: true });
 }

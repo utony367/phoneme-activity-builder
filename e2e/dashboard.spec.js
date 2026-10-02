@@ -1,3 +1,4 @@
+import { mkdirSync } from "node:fs";
 import { test, expect } from "@playwright/test";
 test("reports generation outcomes, readiness, visits and historical deletion", async ({
   page,
@@ -58,9 +59,33 @@ test("reports generation outcomes, readiness, visits and historical deletion", a
   await expect(page.getByText("This view includes simulated")).toBeVisible();
   await page.getByLabel("Data source").selectOption("live");
   await expect(page.getByText("This view includes simulated")).toHaveCount(0);
+  mkdirSync("evidence/screenshots", { recursive: true });
+  await page.screenshot({
+    path: "evidence/screenshots/dashboard.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({
+    path: "evidence/screenshots/dashboard-mobile.png",
+    fullPage: true,
+  });
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "Export CSV" }).click();
   expect((await downloadPromise).suggestedFilename()).toBe(
     "activity-report.csv",
+  );
+});
+
+test("database readiness failure is visibly unavailable", async ({ page }) => {
+  await page.route("**/api/status", (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ status: "unavailable" }),
+    }),
+  );
+  await page.goto("/dashboard");
+  await expect(page.getByText("Database readiness:")).toContainText(
+    "Unavailable",
   );
 });

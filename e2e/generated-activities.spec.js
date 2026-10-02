@@ -76,6 +76,31 @@ for (const type of ["WORDLE", "WORD_SEARCH"])
           .focus();
         await page.keyboard.press("Enter");
         await expect(frame.locator("#message")).toContainText("Complete!");
+        await frame.getByRole("button", { name: "Reset", exact: true }).click();
+        const first = await frame
+          .getByRole("button", {
+            name: "Letter C, row 1, column 1",
+            exact: true,
+          })
+          .boundingBox();
+        const last = await frame
+          .getByRole("button", {
+            name: "Letter R, row 1, column 5",
+            exact: true,
+          })
+          .boundingBox();
+        await page.mouse.move(
+          first.x + first.width / 2,
+          first.y + first.height / 2,
+        );
+        await page.mouse.down();
+        await page.mouse.move(
+          last.x + last.width / 2,
+          last.y + last.height / 2,
+          { steps: 8 },
+        );
+        await page.mouse.up();
+        await expect(frame.locator("#message")).toContainText("Complete!");
       }
     } finally {
       await request.delete(`/api/activities/${a.id}`);

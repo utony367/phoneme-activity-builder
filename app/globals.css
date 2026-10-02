@@ -1725,7 +1725,7 @@ html[data-layout="compact"]
 .report-controls label { display:grid; gap:6px; font-weight:600; }
 .report-controls select { padding:10px; border:1px solid #64748b; border-radius:8px; color:#172554; background:#fff; }
 .metric-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
-.metric-card { padding:20px; border:1px solid #64748b; border-radius:12px; background:var(--card-bg,#fff); }
+.metric-card { padding:20px; border:1px solid #64748b; border-radius:12px; background:var(--surface); }
 .metric-card h2 { font-size:1rem; margin:0; }
 .metric-card p { font-size:1.8rem; font-weight:700; margin:12px 0 0; }
 .source-notice { padding:16px; border:2px solid #92400e; background:#fef3c7; color:#78350f; border-radius:8px; }
@@ -1740,3 +1740,5 @@ html[data-layout="compact"]
 .trend-bars span { width:100%; min-height:2px; background:#2563eb; border-radius:4px 4px 0 0; }
 .trend-bars small { font-size:10px; }
 .operations-page summary { cursor:pointer; padding:12px; }
+
+html[data-theme="dark"] .primary-action { color: #17242d; }

@@ -110,3 +110,28 @@ test("real database filters exact boundaries and prevents visit replay inflation
     await db.pageVisit.count({ where: { visitKey: "real-replay-key" } }),
   ).toBe(1);
 });
+
+test("failed event persistence rolls back creation in a real transaction", async () => {
+  await expect(
+    db.$transaction(async (tx) => {
+      const a = await tx.activity.create({
+        data: {
+          title: "Rollback evidence",
+          activityType: "WORDLE",
+          difficulty: "EASY",
+        },
+      });
+      await tx.operationEvent.create({
+        data: {
+          eventKey: "broken-event",
+          activityId: a.id,
+          eventType: "GENERATION",
+          outcome: "INVALID",
+        },
+      });
+    }),
+  ).rejects.toThrow();
+  expect(
+    await db.activity.count({ where: { title: "Rollback evidence" } }),
+  ).toBe(0);
+});

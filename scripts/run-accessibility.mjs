@@ -87,6 +87,7 @@ try {
   }
   writeFileSync(`${output}/summary.json`, JSON.stringify(summary, null, 2));
   console.log(JSON.stringify(summary, null, 2));
+  if (summary.some((result) => result.score !== 1)) process.exitCode = 1;
 } finally {
   await chrome?.kill();
   staticServer?.close();
