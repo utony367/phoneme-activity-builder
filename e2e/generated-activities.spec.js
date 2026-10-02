@@ -77,6 +77,12 @@ for (const type of ["WORDLE", "WORD_SEARCH"])
         await page.keyboard.press("Enter");
         await expect(frame.locator("#message")).toContainText("Complete!");
         await frame.getByRole("button", { name: "Reset", exact: true }).click();
+        await frame
+          .getByRole("button", {
+            name: "Letter C, row 1, column 1",
+            exact: true,
+          })
+          .scrollIntoViewIfNeeded();
         const first = await frame
           .getByRole("button", {
             name: "Letter C, row 1, column 1",

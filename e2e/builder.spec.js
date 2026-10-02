@@ -13,6 +13,7 @@ test("teacher CRUD preserves Unicode and unsaved settings through word mutations
     .getByRole("listitem")
     .filter({ has: page.getByRole("heading", { name: title, exact: true }) });
   await card.getByRole("link", { name: "Manage words" }).click();
+  await page.waitForURL(/\/activities\/\d+$/);
   const id = page.url().split("/").pop();
   try {
     await page

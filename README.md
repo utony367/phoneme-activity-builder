@@ -1,8 +1,73 @@
 # Phoneme Activity Builder
 
-A database-backed Wordle and Word Search builder for Speech Pathology teachers and students. This Assessment 2 version extends the Assessment 1 Next.js interface so teachers can save reusable activity settings, store words with IPA phonemes, edit or delete records, and generate self-contained HTML activities from the saved database data.
+A database-backed Wordle and Word Search builder for Speech Pathology teachers and students. This Assessment 3 version extends the Assessment 1 Next.js interface so teachers can save reusable activity settings, store words with IPA phonemes, edit or delete records, and generate self-contained HTML activities from the saved database data.
 
 The project began with `npx create-next-app .` and uses the Next.js App Router, React, Prisma, SQLite, Zod, Vitest, and Docker.
+
+## Assessment 3: dashboard, reporting and evidence
+
+Work from the `assessment-3-dashboard` branch. Assessment 1/2 builders and CRUD remain available.
+
+- `/dashboard`: filtered live/simulated reports, generation history, current inventory, UTC daily trend with data table, alerts and CSV export.
+- `OperationEvent`: historical creation/generation outcomes and activity snapshots. Deleting an activity sets its event relation to null; its history stays visible.
+- `PageVisit`: visible page time only. A stable route-entry key is upserted using an atomic maximum, so repeated delivery cannot add time twice. Each visit is capped at 30 minutes.
+- `/api/status`: database readiness, separately from `/health` liveness. Both health signals and the report timestamp are shown.
+- Labelled, idempotent `npm run seed:demo` fixtures support demonstration without presenting synthetic records as classroom usage.
+
+### Windows PowerShell quick start (Node 22)
+
+```powershell
+npm ci
+$env:DATABASE_URL = "file:./dev.db"
+if (!(Test-Path prisma/dev.db)) { New-Item -ItemType File -Path prisma/dev.db | Out-Null }
+npm run db:generate
+npm run db:deploy
+npm run seed:demo
+npm run build
+npm run start
+```
+
+The file-creation step runs only when the database is absent, preserving existing records. Open http://localhost:3000/dashboard and select **Simulated demonstration** to see seeded summaries. Live use is the default filter. Seed fixtures once; repeated seeding retains existing demo history rather than recreating deleted demo activities.
+
+### Verification commands
+
+```powershell
+npm run lint
+npm test
+npm audit --omit=dev --audit-level=high
+npm run build
+npx playwright install chromium
+npm run test:e2e
+npm run test:persistence
+npm run test:accessibility
+```
+
+Stop an existing local server before running Playwright because it starts its own production server. Browser tests and persistence checks use isolated databases, not your teacher database. Accessibility auditing requires an installed Chrome; if detection fails, set `$env:CHROME_PATH` to the Chrome executable. The browser and accessibility workflow runs on Ubuntu/Node 22 and uploads actual HTML/JSON reports, screenshots and traces.
+
+For JMeter, install Apache JMeter 5.6.3 and Java 17. On Bash/WSL:
+
+```bash
+JMETER_BIN=/path/to/apache-jmeter-5.6.3/bin/jmeter \
+node scripts/run-with-server.mjs bash testing/jmeter/run-stages.sh
+```
+
+The runner migrates a temporary database, waits for readiness and starts a production server on port 3001. Stages are **1, 10, 100, 1,000 and 10,000 total workflow users**, with at most **10 concurrent threads**, nine requests per user and one-second ramp per thread. This is a finite workload, not proof of 10,000 concurrent-user capacity. Raw JTL and measured JSON summaries are produced; a missing/partial stage must be reported as incomplete. Use a fresh `OUTPUT` directory for each run.
+
+### Reporting definitions
+
+| Signal | Meaning |
+| --- | --- |
+| Saved activities / words | Current inventory filtered by source, not creation date. |
+| Activities created | Persisted creation events within the chosen time/source filter; includes later-deleted activities. |
+| Generation attempts | Preview/export API requests for known stored activities. Unknown/invalid IDs have no attributed activity type. |
+| Success rate | Successful generations / all generation attempts; empty denominator displays “No data”. |
+| Most-used type | Type with most generation attempts; ties are explicitly shown. |
+| Average visible time | Mean cumulative visible milliseconds for recorded page visits; includes zero-duration server fixtures, excludes hidden time, capped at 30 minutes per visit. |
+| Source | Live operations or labelled simulated fixtures. Browser/load tests are real automated requests; they are not classroom student usage. |
+
+Downloaded activities are self-contained and work offline; their gameplay is not tracked. CSV has the same filters, contains summary metrics and the most recent 20 operations, and neutralizes spreadsheet formula prefixes. UTC boundaries are inclusive; future events are excluded. All-time trends show the most recent 90 days while totals remain all-time.
+
+See [test results](docs/assessment3/TEST_RESULTS.md), [video walkthrough](docs/assessment3/VIDEO_WALKTHROUGH.md), [references](docs/assessment3/REFERENCES.md) and [submission checklist](docs/assessment3/SUBMISSION_CHECKLIST.md). The required 3–8 minute face/voice/student-ID video and official AI acknowledgement must be completed by the student.
 
 ## What the application does
 
