@@ -58,3 +58,34 @@ jobs:
       - name: Stop and remove container
         if: always()
         run: docker rm --force phoneme-a2 || true
+
+  browser-and-accessibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: file:./test.db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm run test:persistence
+      - name: Lighthouse accessibility audits
+        run: |
+          export CHROME_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          npm run test:accessibility
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: assessment3-browser-accessibility
+          path: |
+            playwright-report/
+            test-results/
+            evidence/
+          retention-days: 30
