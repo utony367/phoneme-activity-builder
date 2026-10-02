@@ -1,0 +1,18 @@
+{
+  "node": "22.23.3",
+  "jmeter": "5.6.3",
+  "java": "Temurin17",
+  "next": "16.3.8",
+  "prisma": "6.12.0",
+  "runner": "ubuntu-latest GitHub Actions",
+  "workflowRun": 37044474919,
+  "productRevision": "146ccf9733b48041fe844f68e044ab92dcb870f4",
+  "peakConcurrency": 10,
+  "requestsPerUser": 9,
+  "target": "same runner production server using fresh temporary SQLite file",
+  "limitations": [
+    "10000 total finite workflow users, not simultaneous users",
+    "Environment-specific measurements, not production capacity guarantee"
+  ],
+  "npm": "10.9.9"
+}

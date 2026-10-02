@@ -8,10 +8,10 @@ The project began with `npx create-next-app .` and uses the Next.js App Router, 
 
 Work from the `assessment-3-dashboard` branch. Assessment 1/2 builders and CRUD remain available.
 
-- `/dashboard`: filtered live/simulated reports, generation history, current inventory, UTC daily trend with data table, alerts and CSV export.
+- `/dashboard`: filtered live/simulated reports, generation history, current inventory with activity/word totals per type, UTC daily trend with data table, alerts and CSV export.
 - `OperationEvent`: historical creation/generation outcomes and activity snapshots. Deleting an activity sets its event relation to null; its history stays visible.
 - `PageVisit`: visible page time only. A stable route-entry key is upserted using an atomic maximum, so repeated delivery cannot add time twice. Each visit is capped at 30 minutes.
-- `/api/status`: database readiness, separately from `/health` liveness. Both health signals and the report timestamp are shown.
+- `/api/status`: database readiness, separately from `/health` liveness. Both health signals have a check timestamp and remain visible if reporting fails.
 - Labelled, idempotent `npm run seed:demo` fixtures support demonstration without presenting synthetic records as classroom usage.
 
 ### Windows PowerShell quick start (Node 22)
@@ -51,19 +51,19 @@ JMETER_BIN=/path/to/apache-jmeter-5.6.3/bin/jmeter \
 node scripts/run-with-server.mjs bash testing/jmeter/run-stages.sh
 ```
 
-The runner migrates a temporary database, waits for readiness and starts a production server on port 3001. Stages are **1, 10, 100, 1,000 and 10,000 total workflow users**, with at most **10 concurrent threads**, nine requests per user and one-second ramp per thread. This is a finite workload, not proof of 10,000 concurrent-user capacity. Raw JTL and measured JSON summaries are produced; a missing/partial stage must be reported as incomplete. Use a fresh `OUTPUT` directory for each run.
+The runner migrates a temporary database, waits for readiness and starts a production server on port 3001. Stages are **1, 10, 100, 1,000 and 10,000 total workflow users**, with at most **10 concurrent threads**, nine requests per user and one-second ramp per thread. This is a finite workload, not proof of 10,000 concurrent-user capacity. Generation assertions verify HTML structure, the activity-specific element and the saved word, in addition to HTTP2xx. A negative fixture check rejects incorrect HTTP200 outputs. Raw JTL and measured JSON summaries are produced; a missing/partial stage must be reported as incomplete. Use a fresh `OUTPUT` directory for each run.
 
 ### Reporting definitions
 
-| Signal | Meaning |
-| --- | --- |
-| Saved activities / words | Current inventory filtered by source, not creation date. |
-| Activities created | Persisted creation events within the chosen time/source filter; includes later-deleted activities. |
-| Generation attempts | Preview/export API requests for known stored activities. Unknown/invalid IDs have no attributed activity type. |
-| Success rate | Successful generations / all generation attempts; empty denominator displays “No data”. |
-| Most-used type | Type with most generation attempts; ties are explicitly shown. |
-| Average visible time | Mean cumulative visible milliseconds for recorded page visits; includes zero-duration server fixtures, excludes hidden time, capped at 30 minutes per visit. |
-| Source | Live operations or labelled simulated fixtures. Browser/load tests are real automated requests; they are not classroom student usage. |
+| Signal                   | Meaning                                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Saved activities / words | Current inventory filtered by source, not creation date.                                                                                                     |
+| Activities created       | Persisted creation events within the chosen time/source filter; includes later-deleted activities.                                                           |
+| Generation attempts      | Preview/export API requests for known stored activities. Unknown/invalid IDs have no attributed activity type.                                               |
+| Success rate             | Successful generations / all generation attempts; empty denominator displays “No data”.                                                                      |
+| Most-used type           | Type with most generation attempts; ties are explicitly shown.                                                                                               |
+| Average visible time     | Mean cumulative visible milliseconds for recorded page visits; includes zero-duration server fixtures, excludes hidden time, capped at 30 minutes per visit. |
+| Source                   | Live operations or labelled simulated fixtures. Browser/load tests are real automated requests; they are not classroom student usage.                        |
 
 Downloaded activities are self-contained and work offline; their gameplay is not tracked. CSV has the same filters, contains summary metrics and the most recent 20 operations, and neutralizes spreadsheet formula prefixes. UTC boundaries are inclusive; future events are excluded. All-time trends show the most recent 90 days while totals remain all-time.
 
@@ -82,23 +82,23 @@ See [test results](docs/assessment3/TEST_RESULTS.md), [video walkthrough](docs/a
 
 ## Architecture
 
-| Layer | Responsibility | Main locations |
-| --- | --- | --- |
-| React user interface | Teacher forms, saved-activity dashboard, word manager, HTML preview/download | `app/activities`, `components/` |
-| Next.js route handlers | HTTP CRUD, health, and generation endpoints | `app/api/`, `app/health/route.js` |
-| Validation and service helpers | Zod schemas, typed API errors, safe IDs, client requests | `lib/validation.js`, `lib/api.js`, `lib/words.js`, `lib/client-api.js` |
-| Generation | Escaped, self-contained Wordle and Word Search HTML | `lib/generators/`, `lib/html.js` |
-| Persistence | Prisma Client over SQLite, migrations, relations | `prisma/` |
-| Delivery and quality | Multi-stage Docker image and GitHub Actions checks | `Dockerfile`, `.github/workflows/quality.yml` |
+| Layer                          | Responsibility                                                               | Main locations                                                         |
+| ------------------------------ | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| React user interface           | Teacher forms, saved-activity dashboard, word manager, HTML preview/download | `app/activities`, `components/`                                        |
+| Next.js route handlers         | HTTP CRUD, health, and generation endpoints                                  | `app/api/`, `app/health/route.js`                                      |
+| Validation and service helpers | Zod schemas, typed API errors, safe IDs, client requests                     | `lib/validation.js`, `lib/api.js`, `lib/words.js`, `lib/client-api.js` |
+| Generation                     | Escaped, self-contained Wordle and Word Search HTML                          | `lib/generators/`, `lib/html.js`                                       |
+| Persistence                    | Prisma Client over SQLite, migrations, relations                             | `prisma/`                                                              |
+| Delivery and quality           | Multi-stage Docker image and GitHub Actions checks                           | `Dockerfile`, `.github/workflows/quality.yml`                          |
 
 Browser components call HTTP routes only; they do not import Prisma. Route handlers validate requests, call the Prisma data layer, and return JSON or a generated HTML response.
 
 ## Data model
 
-| Entity | Stored fields | Relationship and purpose |
-| --- | --- | --- |
-| `Activity` | id, title, activityType, difficulty, hint, gridSize, maxAttempts, createdAt, updatedAt | One saved Wordle or Word Search configuration. |
-| `Word` | id, text, phonemes, hint, activityId, createdAt, updatedAt | A word belongs to one Activity. IPA is a Unicode string, so multi-character phonemes are preserved. |
+| Entity     | Stored fields                                                                          | Relationship and purpose                                                                            |
+| ---------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `Activity` | id, title, activityType, difficulty, hint, gridSize, maxAttempts, createdAt, updatedAt | One saved Wordle or Word Search configuration.                                                      |
+| `Word`     | id, text, phonemes, hint, activityId, createdAt, updatedAt                             | A word belongs to one Activity. IPA is a Unicode string, so multi-character phonemes are preserved. |
 
 An Activity has many Words. `activityId + text` is unique, preventing duplicate words inside the same activity. Deleting an Activity cascades to its Words.
 
@@ -113,7 +113,7 @@ An Activity has many Words. `activityId + text` is unique, preventing duplicate 
 ```bash
 git clone https://github.com/utony367/phoneme-activity-builder.git
 cd phoneme-activity-builder
-git checkout assessment-2-backend
+git checkout assessment-3-dashboard
 cp .env.example .env
 npm ci
 npm run db:generate
@@ -146,18 +146,18 @@ HTTP/1.1 200 OK
 
 ## API reference
 
-| Method and route | Purpose | Success |
-| --- | --- | --- |
-| `GET /health` | Container/application health check | 200 `{"status":"ok"}` |
-| `GET /api/activities` | List activities and their words | 200 |
-| `POST /api/activities` | Create a saved configuration | 201 |
-| `GET /api/activities/:id` | Read one configuration and its words | 200 |
-| `PUT /api/activities/:id` | Update activity settings | 200 |
-| `DELETE /api/activities/:id` | Delete activity and its words | 200 |
-| `POST /api/activities/:id/words` | Add a word and phonemes | 201 |
-| `PUT /api/words/:id` | Update a word | 200 |
-| `DELETE /api/words/:id` | Delete a word | 200 |
-| `GET /api/activities/:id/generate` | Download stored activity as HTML | 200 `text/html` |
+| Method and route                   | Purpose                              | Success               |
+| ---------------------------------- | ------------------------------------ | --------------------- |
+| `GET /health`                      | Container/application health check   | 200 `{"status":"ok"}` |
+| `GET /api/activities`              | List activities and their words      | 200                   |
+| `POST /api/activities`             | Create a saved configuration         | 201                   |
+| `GET /api/activities/:id`          | Read one configuration and its words | 200                   |
+| `PUT /api/activities/:id`          | Update activity settings             | 200                   |
+| `DELETE /api/activities/:id`       | Delete activity and its words        | 200                   |
+| `POST /api/activities/:id/words`   | Add a word and phonemes              | 201                   |
+| `PUT /api/words/:id`               | Update a word                        | 200                   |
+| `DELETE /api/words/:id`            | Delete a word                        | 200                   |
+| `GET /api/activities/:id/generate` | Download stored activity as HTML     | 200 `text/html`       |
 
 Example activity request:
 
@@ -186,12 +186,12 @@ Example word request:
 
 All write requests are validated by Zod before Prisma is called.
 
-| Situation | Response |
-| --- | --- |
-| Malformed JSON, invalid ID, invalid field, empty phonemes, invalid word text, or impossible generation input | 400 with `{"error":"…","details":…}` where applicable |
-| Activity or Word does not exist | 404 with an error message |
-| Duplicate word in the same Activity | 409 with an error message |
-| Unexpected server failure | 500 with a generic error message; no stack trace is returned |
+| Situation                                                                                                    | Response                                                     |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| Malformed JSON, invalid ID, invalid field, empty phonemes, invalid word text, or impossible generation input | 400 with `{"error":"…","details":…}` where applicable        |
+| Activity or Word does not exist                                                                              | 404 with an error message                                    |
+| Duplicate word in the same Activity                                                                          | 409 with an error message                                    |
+| Unexpected server failure                                                                                    | 500 with a generic error message; no stack trace is returned |
 
 Activity titles are 1–100 characters. Word text is normalized to lowercase and limited to A–Z letters; phonemes are required Unicode text up to 200 characters; optional hints are limited to 240 characters. HTML generators escape visible text and safely serialize embedded data before creating a downloadable file.
 
@@ -223,15 +223,15 @@ It also runs `npm audit --omit=dev --audit-level=high` as a production-dependenc
 The production Dockerfile uses Node 22 Alpine and a multi-stage build. At startup, `docker-entrypoint.sh` runs `prisma migrate deploy`, then starts the standalone Next.js server. The SQLite database is stored at `/data/app.db` inside a named Docker volume.
 
 ```bash
-docker build -t phoneme-builder-assessment2 .
+docker build -t phoneme-builder-assessment3 .
 docker volume create phoneme-data
-docker run --rm -d --name phoneme-a2 -p 3000:3000 \
-  -v phoneme-data:/data phoneme-builder-assessment2
+docker run --rm -d --name phoneme-a3 -p 3000:3000 \
+  -v phoneme-data:/data phoneme-builder-assessment3
 curl -i http://localhost:3000/health
-docker stop phoneme-a2
+docker stop phoneme-a3
 ```
 
-Reusing `phoneme-data` preserves saved activities across replacement containers. To inspect the container logs, use `docker logs phoneme-a2`.
+Reusing `phoneme-data` preserves saved activities across replacement containers. To inspect the container logs, use `docker logs phoneme-a3`.
 
 ## Folder map
 
@@ -247,12 +247,6 @@ docker-entrypoint.sh       Migration then production startup
 .github/workflows/         Quality and Docker smoke checks
 ```
 
-## Assessment 2 submission checklist
+## Assessment 3 submission checklist
 
-- [ ] Complete the unit's official AI acknowledgement form accurately.
-- [ ] Run the quality commands above and confirm Docker `/health` returns 200.
-- [ ] Submit a ZIP of the source code **without** `node_modules`, `.next`, `.env`, `*.db`, `*.db-wal`, or `*.db-shm`.
-- [ ] Include this repository link: https://github.com/utony367/phoneme-activity-builder
-- [ ] Include the required supporting documentation and references.
-
-See the [Assessment report](docs/ASSESSMENT2_REPORT.md) and [references](docs/REFERENCES.md) before submitting.
+Follow the [Assessment 3 submission checklist](docs/assessment3/SUBMISSION_CHECKLIST.md), [measured test results](docs/assessment3/TEST_RESULTS.md) and [references](docs/assessment3/REFERENCES.md). Submit the clean source ZIP and repository branch link, plus the required personal walkthrough video and official AI acknowledgement. Earlier Assessment 2 documentation remains in `docs/` for project continuity.
