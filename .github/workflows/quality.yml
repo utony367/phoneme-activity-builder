@@ -89,3 +89,42 @@ jobs:
             test-results/
             evidence/
           retention-days: 30
+
+  load-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: file:./test.db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run build
+      - name: Install Apache JMeter
+        run: |
+          curl --fail --location https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz --output /tmp/jmeter.tgz
+          tar -xzf /tmp/jmeter.tgz -C /tmp
+      - name: Measure all finite user stages
+        run: |
+          export JMETER_BIN=/tmp/apache-jmeter-5.6.3/bin/jmeter
+          export OUTPUT=/tmp/assessment3-load
+          node scripts/run-with-server.mjs bash testing/jmeter/run-stages.sh
+      - name: Retain completed or partial results
+        if: always()
+        run: |
+          mkdir -p evidence/jmeter-ci
+          if [ -d /tmp/assessment3-load ]; then cp -r /tmp/assessment3-load/. evidence/jmeter-ci/; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: assessment3-jmeter
+          path: evidence/jmeter-ci/
+          retention-days: 30
