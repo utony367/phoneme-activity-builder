@@ -1,41 +1,43 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { createVisibleVisit } from "../lib/visible-visit";
 export default function PageVisitTracker() {
-  const path = usePathname();
+  const path = usePathname(),
+    entry = useRef(null);
   useEffect(() => {
     if (
       !/^\/(?:dashboard|activities(?:\/[1-9]\d*)?|wordle|word-search)?$/.test(
         path,
       )
-    )
+    ) {
+      entry.current = null;
       return;
-    const visitKey = crypto.randomUUID();
-    let elapsed = 0;
-    let since =
-      document.visibilityState === "visible" ? performance.now() : null;
-    const flush = () => {
-      if (since !== null) elapsed += performance.now() - since;
-      since = document.visibilityState === "visible" ? performance.now() : null;
-      if (elapsed < 1) return;
-      const body = JSON.stringify({
-        visitKey,
+    }
+    if (entry.current?.path !== path)
+      entry.current = {
         path,
-        visibleDurationMs: Math.min(1800000, Math.round(elapsed)),
-      });
-      navigator.sendBeacon(
-        "/api/visits",
-        new Blob([body], { type: "application/json" }),
-      );
-    };
-    document.addEventListener("visibilitychange", flush);
-    window.addEventListener("pagehide", flush);
-    const timer = setInterval(flush, 15000);
+        visit: createVisibleVisit(path, {
+          now: () => performance.now(),
+          isVisible: () => document.visibilityState === "visible",
+          newKey: () => crypto.randomUUID(),
+          send: (data) =>
+            navigator.sendBeacon(
+              "/api/visits",
+              new Blob([JSON.stringify(data)], { type: "application/json" }),
+            ),
+        }),
+      };
+    const visit = entry.current.visit;
+    visit.resume();
+    document.addEventListener("visibilitychange", visit.flush);
+    window.addEventListener("pagehide", visit.pause);
+    const timer = setInterval(visit.flush, 15000);
     return () => {
       clearInterval(timer);
-      document.removeEventListener("visibilitychange", flush);
-      window.removeEventListener("pagehide", flush);
-      flush();
+      document.removeEventListener("visibilitychange", visit.flush);
+      window.removeEventListener("pagehide", visit.pause);
+      visit.pause();
     };
   }, [path]);
   return null;

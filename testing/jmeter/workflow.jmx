@@ -138,6 +138,17 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Require saved-word activity HTML" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="doctype">&lt;!doctype html&gt;</stringProp>
+              <stringProp name="marker">id=&quot;board&quot;</stringProp>
+              <stringProp name="word">chair</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <intProp name="Assertion.test_type">2</intProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+          </ResponseAssertion>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Require 2xx" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="code">2\d\d</stringProp>
@@ -193,6 +204,17 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Require saved-word activity HTML" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="doctype">&lt;!doctype html&gt;</stringProp>
+              <stringProp name="marker">id=&quot;grid&quot;</stringProp>
+              <stringProp name="word">chair</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <intProp name="Assertion.test_type">2</intProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+          </ResponseAssertion>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Require 2xx" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="code">2\d\d</stringProp>

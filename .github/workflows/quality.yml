@@ -112,6 +112,8 @@ jobs:
         run: |
           curl --fail --location https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz --output /tmp/jmeter.tgz
           tar -xzf /tmp/jmeter.tgz -C /tmp
+      - name: Reject malformed HTTP 200 generation outputs
+        run: JMETER_BIN=/tmp/apache-jmeter-5.6.3/bin/jmeter node testing/jmeter/verify-assertions.mjs
       - name: Measure all finite user stages
         run: |
           export JMETER_BIN=/tmp/apache-jmeter-5.6.3/bin/jmeter

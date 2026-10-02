@@ -1,0 +1,42 @@
+[
+  {
+    "name": "dashboard",
+    "url": "http://127.0.0.1:3001/dashboard",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:37:08.677Z",
+    "failedAudits": []
+  },
+  {
+    "name": "builder",
+    "url": "http://127.0.0.1:3001/activities/1",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:37:14.283Z",
+    "failedAudits": []
+  },
+  {
+    "name": "wordle",
+    "url": "http://127.0.0.1:3002/wordle",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:37:19.610Z",
+    "failedAudits": []
+  },
+  {
+    "name": "word-search",
+    "url": "http://127.0.0.1:3002/word_search",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:37:24.735Z",
+    "failedAudits": []
+  },
+  {
+    "name": "dashboard-dark",
+    "url": "http://127.0.0.1:3001/dashboard",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:37:29.966Z",
+    "failedAudits": []
+  }
+]

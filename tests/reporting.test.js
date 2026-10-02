@@ -59,6 +59,10 @@ test("report separates inventory, historical operations and ties", async () => {
   expect(r.operations.successRate).toBe(0.5);
   expect(r.operations.created).toBe(0);
   expect(r.inventory.total).toBe(1);
+  expect(r.inventory.byType).toEqual([
+    { type: "WORDLE", activities: 1, words: 0 },
+    { type: "WORD_SEARCH", activities: 0, words: 0 },
+  ]);
   expect(r.visits.averageVisibleMs).toBe(200);
   expect(r.mostUsedType.types).toHaveLength(2);
   expect(r.alerts.length).toBe(2);

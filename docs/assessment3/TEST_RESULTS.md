@@ -38,4 +38,12 @@ The generated Word Search also retains its button nodes while selecting and prov
 
 ## Final verification
 
-Final runner results will be added after the final branch checks finish. The earlier verified target runs are retained as evidence, but do not replace checks of the final code.
+Verified product revision: `70e73c41e6f5ef7015f098b91d9aa683b67e799a`.
+
+- GitHub Quality run [37041790489](https://github.com/utony367/phoneme-activity-builder/actions/runs/37041790489): quality, Docker and browser/accessibility jobs all passed.
+- Node22 production browser suite: **5/5 passed**; restart persistence passed.
+- Lighthouse final: **dashboard100, builder100, Wordle100, Word Search100, dark dashboard100**. Dark dashboard improved from96 to100 after the measured color correction.
+- Unit/integration tests: **86/86 passed** across19 files; lint/build/Prisma validation and high-severity production audit passed. Production audit reports0 vulnerabilities.
+- Final HTML/JSON audit and Playwright reports plus desktop/mobile screenshots are included in the downloaded evidence bundle. Before-fix dark-mode JSON/HTML is retained for comparison.
+
+An additional Node22 full JMeter CI run is being reconciled separately; no incomplete CI load stage is described as passing.

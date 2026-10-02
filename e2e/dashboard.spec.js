@@ -89,3 +89,25 @@ test("database readiness failure is visibly unavailable", async ({ page }) => {
     "Unavailable",
   );
 });
+
+test("shared database outage keeps health indicators visible", async ({
+  page,
+}) => {
+  for (const path of ["**/api/status", "**/api/reports?*"])
+    await page.route(path, (route) =>
+      route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Database unavailable" }),
+      }),
+    );
+  await page.goto("/dashboard");
+  await expect(page.getByRole("alert")).toContainText("Report unavailable");
+  await expect(
+    page.getByRole("heading", { name: "Service health", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Database readiness:")).toContainText(
+    "Unavailable",
+  );
+  await expect(page.getByText("Liveness:")).toContainText("Healthy");
+});

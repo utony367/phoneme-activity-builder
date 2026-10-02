@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   downloadActivity,
@@ -20,12 +20,20 @@ export default function ActivityEditor({ activityId }) {
   const [previewHtml, setPreviewHtml] = useState("");
   const [status, setStatus] = useState(null);
 
+  const previewRevision = useRef(0);
+
+  function invalidatePreview() {
+    previewRevision.current += 1;
+    setPreviewHtml("");
+  }
+
   async function loadActivity() {
+    invalidatePreview();
     setLoading(true);
     try {
       const saved = await requestJson(`/api/activities/${activityId}`);
       setActivity(saved);
-      setPreviewHtml("");
+      invalidatePreview();
     } catch (error) {
       setStatus({ type: "error", message: error.message });
     } finally {
@@ -77,7 +85,7 @@ export default function ActivityEditor({ activityId }) {
       });
       setActivity((current) => ({ ...current, ...saved }));
       setForm((current) => ({ ...current, ...saved, hint: saved.hint || "" }));
-      setPreviewHtml("");
+      invalidatePreview();
       setStatus({ type: "success", message: "Activity settings saved." });
     } catch (error) {
       setStatus({ type: "error", message: error.message });
@@ -107,11 +115,15 @@ export default function ActivityEditor({ activityId }) {
     if (!activity?.words?.length) return;
     setGenerating(true);
     setStatus(null);
+    const revision = ++previewRevision.current;
     try {
-      setPreviewHtml(await fetchActivityHtml(activityId));
+      const html = await fetchActivityHtml(activityId);
+      if (revision !== previewRevision.current) return;
+      setPreviewHtml(html);
       setStatus({ type: "success", message: "Preview ready below." });
     } catch (error) {
-      setStatus({ type: "error", message: error.message });
+      if (revision === previewRevision.current)
+        setStatus({ type: "error", message: error.message });
     } finally {
       setGenerating(false);
     }

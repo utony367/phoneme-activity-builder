@@ -1,4 +1,5 @@
 "use client";
+import { loadDashboardState } from "../lib/dashboard-loading";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { requestJson } from "../lib/client-api";
@@ -25,26 +26,12 @@ export default function OperationalDashboard() {
   useEffect(() => {
     let active = true;
     const filters = new URLSearchParams({ range, source });
-    Promise.all([
-      requestJson("/api/reports?" + filters),
-      Promise.allSettled([requestJson("/health"), requestJson("/api/status")]),
-    ])
-      .then(([data, status]) => {
+    loadDashboardState(requestJson, filters)
+      .then((state) => {
         if (!active) return;
-        setReport(data);
-        setHealth({
-          live:
-            status[0].status === "fulfilled" && status[0].value.status === "ok",
-          ready:
-            status[1].status === "fulfilled" &&
-            status[1].value.status === "ready",
-        });
-      })
-      .catch((e) => {
-        if (active) {
-          setError(e.message);
-          setReport(null);
-        }
+        setReport(state.report);
+        setError(state.error);
+        setHealth(state.health);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -127,6 +114,24 @@ export default function OperationalDashboard() {
       )}
       {loading && <p role="status">Loading report…</p>}
       {error && <p role="alert">Report unavailable: {error}</p>}
+      {health && !loading && (
+        <>
+          <section className="saved-panel">
+            <h2>Service health</h2>
+            <p>Health checked {new Date(health.checkedAt).toLocaleString()}</p>
+            <p>
+              Liveness:{" "}
+              <strong>{health?.live ? "Healthy" : "Unavailable"}</strong> ·
+              Database readiness:{" "}
+              <strong>{health?.ready ? "Ready" : "Unavailable"}</strong>
+            </p>
+            <p>
+              Generation counters measure export and preview requests, not
+              student gameplay.
+            </p>
+          </section>
+        </>
+      )}
       {report && !loading && (
         <>
           <p className="report-meta">
@@ -143,19 +148,6 @@ export default function OperationalDashboard() {
               </article>
             ))}
           </div>
-          <section className="saved-panel">
-            <h2>Service health</h2>
-            <p>
-              Liveness:{" "}
-              <strong>{health?.live ? "Healthy" : "Unavailable"}</strong> ·
-              Database readiness:{" "}
-              <strong>{health?.ready ? "Ready" : "Unavailable"}</strong>
-            </p>
-            <p>
-              Generation counters measure export and preview requests, not
-              student gameplay.
-            </p>
-          </section>
           <section className="saved-panel">
             <h2>Alerts</h2>
             {report.alerts.length ? (
@@ -198,6 +190,25 @@ export default function OperationalDashboard() {
           <ReportTrend rows={report.trends} />
           <section className="saved-panel">
             <h2>Saved activity inventory</h2>
+            <table>
+              <caption>Current stored content by activity type</caption>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Activities</th>
+                  <th>Words</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.inventory.byType.map((t) => (
+                  <tr key={t.type}>
+                    <th scope="row">{typeLabel(t.type)}</th>
+                    <td>{t.activities}</td>
+                    <td>{t.words}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
             {report.inventory.activities.length ? (
               <ul>
                 {report.inventory.activities.map((a) => (
