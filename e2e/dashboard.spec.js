@@ -102,7 +102,9 @@ test("shared database outage keeps health indicators visible", async ({
       }),
     );
   await page.goto("/dashboard");
-  await expect(page.getByRole("alert")).toContainText("Report unavailable");
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Report unavailable" }),
+  ).toContainText("Report unavailable");
   await expect(
     page.getByRole("heading", { name: "Service health", exact: true }),
   ).toBeVisible();
