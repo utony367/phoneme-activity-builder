@@ -1,0 +1,48 @@
+[
+  {
+    "name": "dashboard",
+    "url": "http://127.0.0.1:3001/dashboard",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:24:55.544Z",
+    "failedAudits": []
+  },
+  {
+    "name": "builder",
+    "url": "http://127.0.0.1:3001/activities/1",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:25:01.152Z",
+    "failedAudits": []
+  },
+  {
+    "name": "wordle",
+    "url": "http://127.0.0.1:3002/wordle",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:25:06.530Z",
+    "failedAudits": []
+  },
+  {
+    "name": "word-search",
+    "url": "http://127.0.0.1:3002/word_search",
+    "score": 1,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:25:11.682Z",
+    "failedAudits": []
+  },
+  {
+    "name": "dashboard-dark",
+    "url": "http://127.0.0.1:3001/dashboard",
+    "score": 0.96,
+    "version": "13.0.3",
+    "fetchTime": "2026-10-02T17:25:16.909Z",
+    "failedAudits": [
+      {
+        "id": "color-contrast",
+        "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+        "description": "Low-contrast text is difficult or impossible for many users to read. [Learn how to provide sufficient color contrast](https://dequeuniversity.com/rules/axe/4.11/color-contrast)."
+      }
+    ]
+  }
+]

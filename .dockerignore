@@ -11,3 +11,10 @@ node_modules
 coverage
 npm-debug.log*
 public/assessment-demo.mp4
+
+.test-data
+.superpowers
+evidence
+temp
+playwright-report
+test-results

@@ -1,3 +1,4 @@
+import PageVisitTracker from "../components/PageVisitTracker";
 import "./globals.css";
 
 import Header from "../components/Header";
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ThemeProvider>
+          <PageVisitTracker />
           <Navbar />
 
           <Header />

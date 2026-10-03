@@ -45,3 +45,10 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/.test-data/
+/playwright-report/
+/test-results/
+
+/temp/
+/evidence/

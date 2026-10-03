@@ -1,0 +1,12 @@
+{
+  "totalUsers": 1000,
+  "peakConcurrency": 10,
+  "expectedRequests": 9000,
+  "samples": 9000,
+  "completedUsers": 1000,
+  "errors": 0,
+  "errorRate": 0,
+  "p95Ms": 11,
+  "throughputPerSecond": 691.8819188191883,
+  "complete": true
+}

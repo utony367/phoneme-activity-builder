@@ -28,6 +28,8 @@ model Activity {
   maxAttempts Int          @default(6)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  source      DataSource @default(LIVE)
+  events      OperationEvent[]
   words       Word[]
 }
 
@@ -42,4 +44,49 @@ model Word {
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
 
   @@unique([activityId, text])
+}
+
+
+enum DataSource {
+  LIVE
+  SIMULATED
+}
+
+enum EventType {
+  ACTIVITY_CREATED
+  GENERATION
+}
+
+enum Outcome {
+  SUCCESS
+  FAILURE
+}
+
+model OperationEvent {
+  id            Int @id @default(autoincrement())
+  eventKey      String @unique
+  eventType     EventType
+  outcome       Outcome
+  activityId    Int?
+  activityTitle String
+  activityType  ActivityType
+  source        DataSource @default(LIVE)
+  errorCategory String?
+  errorMessage  String?
+  durationMs    Int @default(0)
+  occurredAt    DateTime @default(now())
+  activity      Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+
+  @@index([source, occurredAt])
+}
+
+model PageVisit {
+  id                Int @id @default(autoincrement())
+  visitKey          String @unique
+  path              String
+  visibleDurationMs Int
+  source            DataSource @default(LIVE)
+  occurredAt        DateTime @default(now())
+
+  @@index([source, occurredAt])
 }

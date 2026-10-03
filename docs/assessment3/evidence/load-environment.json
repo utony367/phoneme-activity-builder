@@ -1,0 +1,22 @@
+{
+  "system": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "node": "v24.19.0",
+  "cpu": "x86_64",
+  "logicalCPUs": 9,
+  "next": "16.3.8",
+  "prisma": "6.12.0",
+  "jmeter": "5.6.3",
+  "java": "OpenJDK 17.0.20",
+  "peakConcurrency": 10,
+  "rampSeconds": "one second per thread",
+  "requestsPerUser": 9,
+  "database": "fresh isolated SQLite file in OS temporary directory",
+  "target": "local production build; server and generator on same host",
+  "date": "2026-10-02",
+  "limitations": [
+    "Finite workflow users, not 10000 simultaneous users",
+    "Browser/a11y/Docker verified independently on GitHub Ubuntu/Node22",
+    "Local load runtime Node24; not a production capacity SLA",
+    "Preliminary workspace-file and connection failures excluded; raw logs retained separately"
+  ]
+}
